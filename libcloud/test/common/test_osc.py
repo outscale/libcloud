@@ -18,14 +18,9 @@ from libcloud.compute.providers import Provider
 from libcloud.compute.providers import get_driver
 
 
-class EC2MockDriver(object):
-    region_name = 'eu-west-2'
-    service_name = 'api'
-
-
 class TestApiOutscale(unittest.TestCase):
     cls = get_driver(Provider.OUTSCALE)
-    driver = cls(key='xxxxxxxxxxxxxxxxxxxx', secret='xxxxxxxxxxxxxxxxxxxxxxxxx', region="xxxxxxxxxxxx")
+    driver = cls(key='my_key', secret='my_secret', region="my_region")
 
     def test_locations(self):
         response = self.driver.list_locations()
