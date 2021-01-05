@@ -349,3 +349,6 @@ Certificate Authority
 * ``ex_delete_certificate_authority`` - Returns a ``bool``
 * ``ex_read_certificate_authorities`` - Returns a ``list`` of ``dict``
 
+Client Master Key
+-----
+* ``ex_read_admin_password_node`` - Returns a ``str``

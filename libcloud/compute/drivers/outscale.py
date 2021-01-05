@@ -17,6 +17,7 @@ Outscale SDK
 """
 
 import json
+import base64
 import requests
 from datetime import datetime
 
@@ -7948,3 +7949,283 @@ class OutscaleNodeDriver(NodeDriver):
             private_key=private_key,
             fingerprint=key_pair["KeypairFingerprint"],
             driver=self)
+
+    def ex_create_master_key(
+        self,
+        description: str = "",
+        dry_run: bool = False,
+    ):
+        """
+        Create a Customer Master Key.
+        Customer Master Keys (CMKs) are the main logical resources of OKMS
+        (Outscale Key Management Service). Each 3DS OUTSCALE account has a
+        default CMK, which cannot be deleted. You can create additional
+        CMKs. By default, your account has a quota of 20 CMKs.
+
+        :param      description: This is the description of the key you are
+        creating. i.e: purpose of the key.
+        :type       description: ``str``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: a dict containing the created master key.
+        :rtype: ``dict``
+        """
+        action = "CreateMasterKey"
+        data = {"Description" : description, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        if response.status_code == 200:
+            return response.json()["MasterKey"]
+        return response.json()
+
+    def ex_delete_master_key(
+        self,
+        master_key_id : str,
+        days_until_deletion: int = 30,
+        dry_run: bool = False,
+    ):
+        """
+        Schedule the deletion of a Customer Master Key.
+
+        :param      master_key_id: This is the master_key_id of the key you are
+        deleting.
+        :type       master_key_id: ``str``
+
+        :param      days_until_deletion: The delay until the deletion.
+        The default value is 30.
+        :type       days_until_deletion: ``int``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: True is successfull and dict if error.
+        :rtype: ``bool`` or ``dict``
+        """
+        action = "DeleteMasterKey"
+        data = {"MasterKeyId" : master_key_id, "DaysUntilDeletion" : days_until_deletion, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        if response.status_code == 200:
+            return True
+        return response.json()
+
+    def ex_delete_master_key(
+        self,
+        master_key_id : str,
+        days_until_deletion: int = 30,
+        dry_run: bool = False,
+    ):
+        """
+        Schedule the deletion of a Customer Master Key.
+
+        :param      master_key_id: This is the master_key_id of the key you are
+        deleting.
+        :type       master_key_id: ``str``
+
+        :param      days_until_deletion: The delay until the deletion.
+        The default value is 30.
+        :type       days_until_deletion: ``int``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: True is successfull and dict if error.
+        :rtype: ``bool`` or ``dict``
+        """
+        action = "DeleteMasterKey"
+        data = {"MasterKeyId" : master_key_id, "DaysUntilDeletion" : days_until_deletion, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        if response.status_code == 200:
+            return True
+        return response.json()
+
+    def ex_encrypt_plaintext(
+        self,
+        master_key_id : str,
+        plaintext: str,
+        encryption_context: dict = dict(),
+        dry_run: bool = False,
+    ):
+        """
+        Encrypt a plain key using a CMK.
+
+        :param      master_key_id: This is the master_key_id of the key you are
+        using.
+        :type       master_key_id: ``str``
+
+        :param      plaintext: This is text you are encrypting.
+        :type       plaintext: ``str``
+
+        :param      encryption_context: This is the context you are using.
+        It is described here: https://docs.outscale.com/api#tocsencryptplaintextresponse.
+        :type       encryption_context: ``dict``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: a dict if error else the ciphertext.
+        :rtype: ``dict`` or ``str``
+        """
+        action = "EncryptPlaintext"
+        data = {"MasterKeyId" : master_key_id, "Plaintext" : base64.b64encode(bytes(plaintext, 'utf-8')).decode('ascii'), "EncryptionContext" : encryption_context, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        if response.status_code == 200:
+            return response.json()['Ciphertext']
+        return response.json()
+
+
+    def ex_decrypt_ciphertext(
+        self,
+        ciphertext: str,
+        encryption_context: dict = dict(),
+        dry_run: bool = False,
+    ):
+        """
+        Encrypt a plain key using a CMK.
+
+        :param      ciphertext: This is text you decrypting.
+        :type       ciphertext: ``str``
+
+        :param      encryption_context: This is the context you are using.
+        :type       encryption_context: ``dict``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: a dict if error else the plaintext.
+        :rtype: ``dict`` or ``str``
+        """
+        action = "DecryptCiphertext"
+        data = {"Ciphertext" : ciphertext, "EncryptionContext" : encryption_context, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        if response.status_code == 200:
+            return base64.b64decode(response.json()['Plaintext']).decode('ascii')
+        return response.json()
+
+    def ex_generate_data_key(
+        self,
+        master_key_id : str,
+        size : int,
+        generate_plaintext: bool,
+        encryption_context: dict = dict(),
+        dry_run: bool = False,
+    ):
+        """
+        Generates a data key using a master key.
+
+        :param      master_key_id: This is the master_key_id we want to use.
+        :type       master_key_id: ``str``
+
+        :param      size: Size of the data between 1 and 1024.
+        :type       size: ``int``
+
+        :param      generated_plaintext: If true, data received won't be encrypted.
+        :type       generated_plaintext: ``bool``
+
+        :param      encryption_context: This is the context you are using.
+        :type       encryption_context: ``dict``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: a dict containing 'Plaintext' if generate_plaintext is true and `Ciphertext`.
+        :rtype: ``dict`` of ``str``
+        """
+        action = "GenerateDataKey"
+        data = {"MasterKeyId" : master_key_id, "Size": size, "GeneratePlaintext" : generate_plaintext,  "EncryptionContext" : encryption_context, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        return response.json()
+
+    def ex_read_master_keys(
+        self,
+        filters_master_key: dict = dict(),
+        dry_run: bool = False,
+    ):
+        """
+        Read al master keys.
+
+        :param      filters_master_key: This is the master_key_id we want to use.
+        More at https://docs.outscale.com/api#tocsfiltersmasterkey.
+        :type       filters_master_key: ``str``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: a dict containing 'Plaintext' if generate_plaintext is true and `Ciphertext`.
+        :rtype: ``dict``
+        """
+        action = "ReadMasterKeys"
+        data = {"DryRun": dry_run, "Filters" : filters_master_key}
+        response = self._call_api(action, json.dumps(data))
+        return response.json()
+
+    def ex_undelete_master_key(
+        self,
+        master_key_id : str,
+        dry_run: bool = False,
+    ):
+        """
+        Abort the deletion of a Customer Master Key.
+
+        :param      master_key_id: This is the master_key_id of the key you are
+        saving from deletion.
+        :type       master_key_id: ``str``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: True is successfull and dict if error.
+        :rtype: ``dict``
+        """
+        action = "UndeleteMasterKey"
+        data = {"MasterKeyId" : master_key_id, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        if response.status_code == 200:
+            return response.json()["MasterKey"]
+        return response.json()
+
+    def ex_update_master_key(
+        self,
+        master_key_id: str,
+        description: str,
+        enabled: bool,
+        dry_run: bool = False,
+    ):
+        """
+        Create a Customer Master Key.
+        Customer Master Keys (CMKs) are the main logical resources of OKMS
+        (Outscale Key Management Service). Each 3DS OUTSCALE account has a
+        default CMK, which cannot be deleted. You can create additional
+        CMKs. By default, your account has a quota of 20 CMKs.
+
+        :param      master_key_id: This is the master_key_id of the key you are
+        modifying.
+        :type       master_key_id: ``str``
+
+        :param      description: This is the new description of the key..
+        :type       description: ``str``
+
+        :param      enabled: If the CMK is enabled.
+        :type       enabled: ``bool``
+
+        :param      dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       dry_run: ``bool``
+
+        :return: a dict containing the created master key.
+        :rtype: ``dict``
+        """
+        action = "UpdateMasterKey"
+        data = {"MasterKeyId" : master_key_id, "Enabled" : enabled, "Description" : description, "DryRun": dry_run}
+        response = self._call_api(action, json.dumps(data))
+        if response.status_code == 200:
+            return response.json()["MasterKey"]
+        return response.json()
