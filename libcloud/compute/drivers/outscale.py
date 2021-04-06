@@ -82,8 +82,9 @@ class OutscaleNodeDriver(NodeDriver):
         :param      ex_dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       ex_dry_run: ``bool``
+
         :return: locations details
-        :rtype: ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadLocations"
         data = json.dumps({"DryRun": ex_dry_run})
@@ -99,8 +100,9 @@ class OutscaleNodeDriver(NodeDriver):
         :param      ex_dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       ex_dry_run: ``bool``
+
         :return: regions details
-        :rtype: ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadRegions"
         data = json.dumps({"DryRun": ex_dry_run})
@@ -116,8 +118,9 @@ class OutscaleNodeDriver(NodeDriver):
         :param      ex_dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       ex_dry_run: ``bool``
+
         :return: subregions details
-        :rtype: ``dict``
+        :rtype: ``List`` of `dict``
         """
         action = "ReadSubregions"
         data = json.dumps({"DryRun": ex_dry_run})
@@ -187,8 +190,8 @@ class OutscaleNodeDriver(NodeDriver):
         documentation for filter
         :type       data: ``string``
 
-        :return: nodes
-        :rtype: ``dict``
+        :return: List of public ips
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadPublicIps"
         response = self._call_api(action, data)
@@ -205,7 +208,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       dry_run: ``bool``
 
         :return: regions details
-        :rtype: ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadPublicIpRanges"
         data = json.dumps({"DryRun": dry_run})
@@ -214,14 +217,15 @@ class OutscaleNodeDriver(NodeDriver):
             return response.json()["PublicIps"]
         return response.json()
 
-    def ex_attach_public_ip(self,
-                            allow_relink: bool = None,
-                            dry_run: bool = False,
-                            nic_id: str = None,
-                            vm_id: str = None,
-                            public_ip: str = None,
-                            public_ip_id: str = None,
-                            ):
+    def ex_attach_public_ip(
+        self,
+        allow_relink: bool = None,
+        dry_run: bool = False,
+        nic_id: str = None,
+        vm_id: str = None,
+        public_ip: str = None,
+        public_ip_id: str = None,
+    ):
         """
         Attach public ip to a node.
 
@@ -308,29 +312,30 @@ class OutscaleNodeDriver(NodeDriver):
             return True
         return response.json()
 
-    def create_node(self,
-                    image: NodeImage,
-                    name: str = None,
-                    ex_dry_run: bool = False,
-                    ex_block_device_mapping: dict = None,
-                    ex_boot_on_creation: bool = True,
-                    ex_bsu_optimized: bool = True,
-                    ex_client_token: str = None,
-                    ex_deletion_protection: bool = False,
-                    ex_keypair_name: str = None,
-                    ex_max_vms_count: int = None,
-                    ex_min_vms_count: int = None,
-                    ex_nics: List[dict] = None,
-                    ex_performance: str = None,
-                    ex_placement: dict = None,
-                    ex_private_ips: List[str] = None,
-                    ex_security_group_ids: List[str] = None,
-                    ex_security_groups: List[str] = None,
-                    ex_subnet_id: str = None,
-                    ex_user_data: str = None,
-                    ex_vm_initiated_shutdown_behavior: str = None,
-                    ex_vm_type: str = None
-                    ):
+    def create_node(
+        self,
+        image: NodeImage,
+        name: str = None,
+        ex_dry_run: bool = False,
+        ex_block_device_mapping: dict = None,
+        ex_boot_on_creation: bool = True,
+        ex_bsu_optimized: bool = True,
+        ex_client_token: str = None,
+        ex_deletion_protection: bool = False,
+        ex_keypair_name: str = None,
+        ex_max_vms_count: int = None,
+        ex_min_vms_count: int = None,
+        ex_nics: List[dict] = None,
+        ex_performance: str = None,
+        ex_placement: dict = None,
+        ex_private_ips: List[str] = None,
+        ex_security_group_ids: List[str] = None,
+        ex_security_groups: List[str] = None,
+        ex_subnet_id: str = None,
+        ex_user_data: str = None,
+        ex_vm_initiated_shutdown_behavior: str = None,
+        ex_vm_type: str = None
+    ):
         """
         Create a new instance.
 
@@ -381,7 +386,7 @@ class OutscaleNodeDriver(NodeDriver):
         :param      ex_nics: One or more NICs. If you specify this parameter,
         you must define one NIC as the primary
         network interface of the VM with 0 as its device number.
-        :type       ex_nics: ``list`` of ``dict``
+        :type       ex_nics: ``List`` of ``dict``
 
         :param      ex_performance: The performance of the VM (standard | high
         | highest).
@@ -391,15 +396,15 @@ class OutscaleNodeDriver(NodeDriver):
         :type       ex_placement: ``dict``
 
         :param      ex_private_ips: One or more private IP addresses of the VM.
-        :type       ex_private_ips: ``list``
+        :type       ex_private_ips: ``List`` of ``str``
 
         :param      ex_security_group_ids: One or more IDs of security group
         for the VMs.
-        :type       ex_security_group_ids: ``list``
+        :type       ex_security_group_ids: ``List`` of ``str``
 
         :param      ex_security_groups: One or more names of security groups
         for the VMs.
-        :type       ex_security_groups: ``list``
+        :type       ex_security_groups: ``List`` of ``str``
 
         :param      ex_subnet_id: The ID of the Subnet in which you want to
         create the VM.
@@ -420,7 +425,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       ex_vm_type: ``str``
 
         :return: the created instance
-        :rtype: ``dict``
+        :rtype: ``Node``
         """
         data = {
             "DryRun": ex_dry_run,
@@ -487,9 +492,12 @@ class OutscaleNodeDriver(NodeDriver):
                     "VmIds": [node.id]
                 }
             }
-            return self._to_node(
-                self._call_api(action, json.dumps(data)).json()["Vms"][0]
-            )
+            response = self._call_api(action, data)
+            if response.status_code == 200:
+                return self._to_node(
+                    self._call_api(action, json.dumps(data)).json()["Vms"][0]
+                )
+            return response.json()
         return node
 
     def reboot_node(self, node: Node):
@@ -497,7 +505,7 @@ class OutscaleNodeDriver(NodeDriver):
         Reboot instance.
 
         :param      node: VM(s) you want to reboot (required)
-        :type       node: ``list``
+        :type       node: ``List``
 
         :return: the rebooted instances
         :rtype: ``dict``
@@ -531,8 +539,7 @@ class OutscaleNodeDriver(NodeDriver):
         """
         Stop a Vm.
 
-        :param      node: the  VM(s)
-                    you want to stop (required)
+        :param      node: the  VM(s) you want to stop (required)
         :type       node: ``Node``
 
         :return: the rebooted instances
@@ -545,15 +552,58 @@ class OutscaleNodeDriver(NodeDriver):
             return True
         return response.json()
 
-    def list_nodes(self, ex_data: str = "{}"):
+    def list_nodes(
+        self,
+        ex_tag_keys: List[str] = None,
+        ex_tag_values: List[str] = None,
+        ex_tags: List[str] = None,
+        ex_vm_ids: List[str] = None,
+        ex_dry_run: bool = False
+    ):
         """
         List all nodes.
 
-        :return: nodes
+        :param      ex_tag_keys: The keys of the tags associated with the VMs.
+        :type       ex_tag_keys: ``List`` of ``str``
+
+        :param      ex_tag_values: The values of the tags associated with
+        the VMs.
+        :type       ex_tag_values: ``List`` of ``str``
+
+        :param      ex_tags: The key/value combination of the tags associated 
+        with the VMs, in the following format:
+        "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
+        :type       ex_tag_values: ``List`` of ``str``
+
+        :param      ex_vm_ids: One or more IDs of VMs.
+        :type       ex_vm_ids: ``List`` of ``str``
+
+        :param      ex_dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       ex_dry_run: ``bool``
+
+        :return: ``List`` of ``Nodes`
         :rtype: ``dict``
         """
         action = "ReadVms"
-        response = self._call_api(action, ex_data)
+        data = {"Filters": {}, "DryRun": ex_dry_run}
+        if ex_tag_keys is not None:
+            data["Filters"].update({
+                "TagKeys": ex_tag_keys
+            })
+        if ex_tag_values is not None:
+            data["Filters"].update({
+                "TagValues": ex_tag_values
+            })
+        if ex_tags is not None:
+            data["Filters"].update({
+                "Tags": ex_tags
+            })
+        if ex_vm_ids is not None:
+            data["Filters"].update({
+                "VmIds": ex_vm_ids
+            })
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_nodes(response.json()["Vms"])
         return response.json()
@@ -639,30 +689,30 @@ class OutscaleNodeDriver(NodeDriver):
         :type       bsu_optimized: ``bool``
 
         :param      memory_sizes: The amounts of memory, in gibibytes (GiB).
-        :type       memory_sizes: ``list`` of ``int``
+        :type       memory_sizes: ``List`` of ``int``
 
         :param      vcore_counts: The numbers of vCores.
-        :type       vcore_counts: ``list`` of ``int``
+        :type       vcore_counts: ``List`` of ``int``
 
         :param      vm_type_names: The names of the VM types. For more
         information, see Instance Types.
-        :type       vm_type_names: ``list`` of ``str``
+        :type       vm_type_names: ``List`` of ``str``
 
         :param      volume_counts: The maximum number of ephemeral storage
         disks.
-        :type       volume_counts: ``list`` of ``int``
+        :type       volume_counts: ``List`` of ``int``
 
 
         :param      volume_sizes: The size of one ephemeral storage disk,
         in gibibytes (GiB).
-        :type       volume_sizes: ``list`` of ``int``
+        :type       volume_sizes: ``List`` of ``int``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: list of vm types
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadVmTypes"
         data = {"Filters": {}, "DryRun": dry_run}
@@ -699,22 +749,22 @@ class OutscaleNodeDriver(NodeDriver):
         :type       all_vms: ``bool``
 
         :param      subregion_names: The names of the Subregions of the VMs.
-        :type       subregion_names: ``list`` of ``str``
+        :type       subregion_names: ``List`` of ``str``
 
         :param      vm_ids: One or more IDs of VMs.
-        :type       vm_ids: ``list`` of ``str``
+        :type       vm_ids: ``List`` of ``str``
 
         :param      vm_states: The states of the VMs
         (pending | running | stopping | stopped | shutting-down | terminated
         | quarantine)
-        :type       vm_states: ``list`` of ``str``
+        :type       vm_states: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: list the status of one ore more vms
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadVmsState"
         data = {"Filters": {}, "DryRun": dry_run}
@@ -899,7 +949,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       ex_dry_run: ``bool``
 
         :return: the created image
-        :rtype: ``dict``
+        :rtype: ``NodeImage``
         """
         data = {
             "DryRun": ex_dry_run,
@@ -919,9 +969,8 @@ class OutscaleNodeDriver(NodeDriver):
             data.update({"SourceRegionName": ex_source_region_name})
         if ex_file_location is not None:
             data.update({"FileLocation": ex_file_location})
-        data = json.dumps(data)
         action = "CreateImage"
-        response = self._call_api(action, data)
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_node_image(response.json()["Image"])
         return response.json()
@@ -1044,16 +1093,16 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      account_aliases: The account aliases of the
         owners of the OMIs.
-        :type       account_aliases: ``list`` of ``str``
+        :type       account_aliases: ``List`` of ``str``
 
         :param      account_ids: The account IDs of the owners of the
         OMIs. By default, all the OMIs for which you have launch
         permissions are described.
-        :type       account_ids: ``list`` of ``str``
+        :type       account_ids: ``List`` of ``str``
 
         :param      architectures: The architectures of the
         OMIs (i386 | x86_64).
-        :type       architectures: ``list`` of ``str``
+        :type       architectures: ``List`` of ``str``
 
         :param      block_device_mapping_delete_on_vm_deletion: Indicates
         whether the block device mapping is deleted when terminating the VM.
@@ -1062,77 +1111,77 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      block_device_mapping_device_names: The device names for
         the volumes.
-        :type       block_device_mapping_device_names: ``list`` of ``str``
+        :type       block_device_mapping_device_names: ``List`` of ``str``
 
         :param      block_device_mapping_snapshot_ids: The IDs of the
         snapshots used to create the volumes.
-        :type       block_device_mapping_snapshot_ids: ``list`` of ``str``
+        :type       block_device_mapping_snapshot_ids: ``List`` of ``str``
 
         :param      block_device_mapping_volume_sizes: The sizes of the
         volumes, in gibibytes (GiB).
-        :type       block_device_mapping_volume_sizes: ``list`` of ``int``
+        :type       block_device_mapping_volume_sizes: ``List`` of ``int``
 
         :param      block_device_mapping_volume_types: The types of
         volumes (standard | gp2 | io1).
-        :type       block_device_mapping_volume_types: ``list`` of ``str``
+        :type       block_device_mapping_volume_types: ``List`` of ``str``
 
         :param      descriptions: The descriptions of the OMIs, provided
         when they were created.
-        :type       descriptions: ``list`` of ``str``
+        :type       descriptions: ``List`` of ``str``
 
         :param      file_locations: The locations where the OMI files are
         stored on Object Storage Unit (OSU).
-        :type       file_locations: ``list`` of ``str``
+        :type       file_locations: ``List`` of ``str``
 
         :param      image_ids: The IDs of the OMIs.
-        :type       image_ids: ``list`` of ``str``
+        :type       image_ids: ``List`` of ``str``
 
         :param      image_names: The names of the OMIs, provided when
         they were created.
-        :type       image_names: ``list`` of ``str``
+        :type       image_names: ``List`` of ``str``
 
         :param      permission_to_launch_account_ids: The account IDs of the
         users who have launch permissions for the OMIs.
-        :type       permission_to_launch_account_ids: ``list`` of ``str``
+        :type       permission_to_launch_account_ids: ``List`` of ``str``
 
         :param      permission_to_lauch_global_permission: If true, lists
         all public OMIs. If false, lists all private OMIs.
-        :type       permission_to_lauch_global_permission: ``list`` of ``str``
+        :type       permission_to_lauch_global_permission: ``List`` of ``str``
 
         :param      root_device_names: The device names of the root
         devices (for example, /dev/sda1).
-        :type       root_device_names: ``list`` of ``str``
+        :type       root_device_names: ``List`` of ``str``
 
         :param      root_device_types: The types of root device used by
         the OMIs (always bsu).
-        :type       root_device_types: ``list`` of ``str``
+        :type       root_device_types: ``List`` of ``str``
 
         :param      states: The states of the OMIs
         (pending | available | failed).
-        :type       states: ``list`` of ``str``
+        :type       states: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the OMIs.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated
         with the OMIs.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The key/value combination of the tags associated
         with the OMIs, in the following format:"Filters":
         {"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      virtualization_types: The virtualization types
         (always hvm).
-        :type       virtualization_types: ``list`` of ``str``
+        :type       virtualization_types: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: a list of image
-        :rtype: ``list`` of ``dict``
+        :return: a list of images
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadImages"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -1211,9 +1260,10 @@ class OutscaleNodeDriver(NodeDriver):
             data["Filters"].update({
                 "States": states
             })
-        if tag_keys is not None:
+        if tag_keys is not None and tag_values is not None:
             data["Filters"].update({
-                "TagKeys": tag_keys
+                "TagKeys": tag_keys,
+                "TagValues": tag_values
             })
         if image_names is not None:
             data["Filters"].update({
@@ -1241,14 +1291,14 @@ class OutscaleNodeDriver(NodeDriver):
         Lists one or more image export tasks.
 
         :param      task_ids: The IDs of the export tasks.
-        :type       task_ids: ``list`` of ``str``
+        :type       task_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: image export tasks
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadImageExportTasks"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -1257,7 +1307,6 @@ class OutscaleNodeDriver(NodeDriver):
                 "TaskIds": task_ids
             })
         response = self._call_api(action, json.dumps(data))
-        print(response.json())
         if response.status_code == 200:
             return response.json()["ImageExportTasks"]
         return response.json()
@@ -1320,7 +1369,7 @@ class OutscaleNodeDriver(NodeDriver):
         :param      perm_to_launch_addition_account_ids: The account
         ID of one or more users who have permissions for the resource.
         :type       perm_to_launch_addition_account_ids:
-        ``list`` of ``dict``
+        ``List`` of ``dict``
 
         :param      perm_to_launch_addition_global_permission:
         If true, the resource is public. If false, the resource is private.
@@ -1329,7 +1378,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      perm_to_launch_removals_account_ids: The account
         ID of one or more users who have permissions for the resource.
-        :type       perm_to_launch_removals_account_ids: ``list`` of ``dict``
+        :type       perm_to_launch_removals_account_ids: ``List`` of ``dict``
 
         :param      perm_to_launch_removals_global_permission: If true,
         the resource is public. If false, the resource is private.
@@ -1373,10 +1422,12 @@ class OutscaleNodeDriver(NodeDriver):
             return response.json()["Image"]
         return response.json()
 
-    def create_key_pair(self,
-                        name: str,
-                        ex_dry_run: bool = False,
-                        ex_public_key: str = None):
+    def create_key_pair(
+        self,
+        name: str,
+        ex_dry_run: bool = False,
+        ex_public_key: str = None
+    ):
         """
         Create a new key pair.
 
@@ -1392,7 +1443,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       ex_public_key: ``str``
 
         :return: the created key pair
-        :rtype: ``dict``
+        :rtype: ``KeyPair``
         """
         data = {
             "KeypairName": name,
@@ -1407,20 +1458,44 @@ class OutscaleNodeDriver(NodeDriver):
             return self._to_key_pair(response.json()["Keypair"])
         return response.json()
 
-    def list_key_pairs(self, ex_data: str = "{}"):
+    def list_key_pairs(
+        self,
+        ex_names: List[str] = None,
+        ex_fingerprints: List[str] = None,
+        ex_dry_run: bool = False
+    ):
         """
         List all key pairs.
 
+        :param      ex_names: The names of the keypairs.
+        :type       ex_names: ``List`` of ``str``
+
+        :param      ex_fingerprints: The fingerprints of the keypairs.
+        :type       ex_fingerprints: ``List`` of ``str``
+
+        :param      ex_dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       ex_dry_run: ``bool``
+
         :return: key pairs
-        :rtype: ``dict``
+        :rtype: ``list`` of ``KeyPair``
         """
         action = "ReadKeypairs"
-        response = self._call_api(action, ex_data)
+        data = {"DryRun": ex_dry_run, "Filters": {}}
+        if ex_names is not None:
+            data["Filters"].update({"KeypairNames": ex_names})
+        if ex_fingerprints is not None:
+            data["Filters"].update({"KeypairFingerprints": ex_fingerprints})
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_key_pairs(response.json()["Keypairs"])
         return response.json()
 
-    def get_key_pair(self, name: str):
+    def get_key_pair(
+        self,
+        name: str = None,
+        ex_dry_run: bool = False
+    ):
         """
         Get a specific key pair.
 
@@ -1432,8 +1507,8 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``dict``
         """
         action = "ReadKeypairs"
-        data = '{"Filters": {"KeypairNames" : ["' + name + '"]}}'
-        response = self._call_api(action, data)
+        data = {"Filters": {"KeypairNames": [name]}}
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_key_pair(response.json()["Keypairs"][0])
         return response.json()
@@ -1524,15 +1599,140 @@ class OutscaleNodeDriver(NodeDriver):
             return self._to_snapshot(response.json()["Volume"])
         return response.json()
 
-    def list_snapshots(self, ex_data: str = "{}"):
+    def list_snapshots(
+        self,
+        ex_account_aliases: [str] = None,
+        ex_account_ids: [str] = None,
+        ex_descriptions: [str] = None,
+        ex_permissions_to_create_volume_account_ids: [str] = None,
+        ex_permissions_to_create_volume_global_permission: bool = None,
+        ex_progresses: [int] = None,
+        ex_snapshot_ids: [str] = None,
+        ex_states: [str] = None,
+        ex_tag_keys: [str] = None,
+        ex_tag_values: [str] = None,
+        ex_tags: [str] = None,
+        ex_volume_ids: [str] = None,
+        ex_volume_sizes: [int] = None,
+        ex_dry_run: bool = None
+    ):
         """
         List all volume snapshots.
 
-        :return: snapshots
-        :rtype: ``dict``
+        :param      ex_account_aliases: The account aliases of the owners of
+        the snapshots.
+        :type       ex_account_aliases: ``List`` of ``str``
+
+        :param      ex_account_ids: The account IDs of the owners of the
+        snapshots.The account IDs of the owners of the snapshots.
+        :type       ex_account_ids: ``List`` of ``str``
+
+        :param      ex_descriptions: The descriptions of the snapshots.
+        :type       ex_descriptions: ``List`` of ``str``
+
+        :param      ex_permissions_to_create_volume_account_ids: The account
+        IDs of one or more users who have permissions to create volumes.
+        :type       ex_permissions_to_create_volume_account_ids: ``List`` of
+        ``str``
+
+        :param      ex_permissions_to_create_volume_global_permission: If true,
+        lists all public volumes. If false, lists all private volumes.
+        :type       ex_permissions_to_create_volume_global_permission: ``bool``
+
+        :param      ex_progresses: The progresses of the snapshots, as a
+        percentage.
+        :type       ex_progresses: ``List`` of ``int``
+
+        :param      ex_snapshot_ids: The progresses of the snapshots, as a
+        percentage.
+        :type       ex_snapshot_ids: ``List`` of ``str``
+
+        :param      ex_states: The states of the snapshots
+        (in-queue | completed | error).
+        :type       ex_states: ``List`` of ``str``
+
+        :param      ex_tag_keys: The keys of the tags associated with the
+        snapshots.
+        :type       ex_tag_keys: ``List`` of ``str``
+
+        :param      ex_tag_values: The values of the tags associated with the
+        snapshots.
+        :type       ex_tag_values: ``List`` of ``str``
+
+        :param      ex_tags: The key/value combination of the tags associated
+        with the snapshots, in the following format:
+        "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
+        :type       ex_tags: ``List`` of ``str``
+
+        :param      ex_volume_ids: The IDs of the volumes used to create the
+        snapshots.
+        :type       ex_volume_ids: ``List`` of ``str``
+
+        :param      ex_volume_sizes: The sizes of the volumes used to create
+        the snapshots, in gibibytes (GiB).
+        :type       ex_volume_sizes: ``List`` of ``int``
+
+        :param      ex_dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       ex_dry_run: ``bool``
+
+        :return: A list of snapshots
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadSnapshots"
-        response = self._call_api(action, ex_data)
+        data = {"DryRun": ex_dry_run, "Filters": {}}
+        if ex_account_aliases is not None:
+            data["Filters"].update({
+                "AccountAliases": ex_account_aliases
+            })
+        if ex_account_ids is not None:
+            data["Filters"].update({
+                "AccountIds": ex_account_ids
+            })
+        if ex_descriptions is not None:
+            data["Filters"].update({
+                "Descriptions": ex_descriptions
+            })
+        if ex_permissions_to_create_volume_account_ids is not None:
+            data["Filters"].update({
+                "PermissionsToCreateVolumeAccountIds":
+                    ex_permissions_to_create_volume_account_ids
+            })
+        if ex_permissions_to_create_volume_global_permission is not None:
+            data["Filters"].update({
+                "PermissionsToCreateVolumeGlobalPermission":
+                    ex_permissions_to_create_volume_global_permission
+            })
+        if ex_progresses is not None:
+            data["Filters"].update({
+                "Progress": ex_progresses
+            })
+        if ex_snapshot_ids is not None:
+            data["Filters"].update({
+                "SnapshotIds": ex_snapshot_ids
+            })
+        if ex_states is not None:
+            data["Filters"].update({
+                "States": ex_states
+            })
+        if ex_tag_keys is not None and ex_tag_values is not None:
+            data["Filters"].update({
+                "TagKeys": ex_tag_keys,
+                "TagValues": ex_tag_values
+            })
+        if ex_tags is not None:
+            data["Filters"].update({
+                "Tags": ex_tags
+            })
+        if ex_volume_ids is not None:
+            data["Filters"].update({
+                "VolumeIds": ex_volume_ids
+            })
+        if ex_volume_sizes is not None:
+            data["Filters"].update({
+                "VolumeSizes": ex_volume_sizes
+            })
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_snapshots(response.json()["Snapshots"])
         return response.json()
@@ -1544,7 +1744,7 @@ class OutscaleNodeDriver(NodeDriver):
         :param     volume: the volume from which to look for snapshots
         :type      volume: StorageVolume
 
-        :rtype: ``list`` of :class ``VolumeSnapshot``
+        :rtype: ``List`` of :class ``VolumeSnapshot``
         """
         action = "ReadSnapshots"
         data = {
@@ -1552,7 +1752,7 @@ class OutscaleNodeDriver(NodeDriver):
                 "VolumeIds": [volume.id]
             }
         }
-        response = self._call_api(action, data)
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_snapshots(response.json()["Snapshots"])
         return response.json()
@@ -1674,14 +1874,14 @@ class OutscaleNodeDriver(NodeDriver):
         Lists one or more image export tasks.
 
         :param      task_ids: The IDs of the export tasks.
-        :type       task_ids: ``list`` of ``str``
+        :type       task_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: snapshot export tasks
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadSnapshotExportTasks"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -1714,7 +1914,7 @@ class OutscaleNodeDriver(NodeDriver):
         The account ID of one or more users who have permissions
         for the resource.
         :type       perm_to_create_volume_addition_account_id:
-        ``list`` of ``str``
+        ``List`` of ``str``
 
         :param      perm_to_create_volume_addition_global_perm: If true,
         the resource is public. If false, the resource is private.
@@ -1723,7 +1923,7 @@ class OutscaleNodeDriver(NodeDriver):
         :param      perm_to_create_volume_removals_account_id: The account ID
          of one or more users who have permissions for the resource.
         :type       perm_to_create_volume_removals_account_id:
-        ``list`` of ``str``
+        ``List`` of ``str``
 
         :param      perm_to_create_volume_removals_global_perm: If true,
          the resource is public. If false, the resource is private.
@@ -1737,7 +1937,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       dry_run: ``bool``
 
         :return: snapshot export tasks
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "UpdateSnapshot"
         data = {
@@ -1830,13 +2030,129 @@ class OutscaleNodeDriver(NodeDriver):
             return self._to_volume(response.json()["Volume"])
         return response.json()
 
-    def list_volumes(self, ex_data: str = "{}"):
+    def list_volumes(
+        self,
+        creation_dates: List[str] = None,
+        link_volume_del_on_vm_del: bool = None,
+        link_volume_device_names: List[str] = None,
+        link_volume_link_dates: List[str] = None,
+        link_volume_link_states: List[str] = None,
+        link_volume_vm_ids: List[str] = None,
+        snapshot_ids: List[str] = None,
+        subregion_names: List[str] = None,
+        tag_keys: List[str] = None,
+        tag_values: List[str] = None,
+        tags: List[str] = None,
+        volume_ids: List[str] = None,
+        volume_sizes: List[str] = None,
+        volume_states: List[str] = None,
+        volume_types: List[str] = None,
+        ex_dry_run: bool = False
+    ):
         """
         List all volumes.
-        :rtype: ``list`` of :class:`.StorageVolume`
+
+        :param      creation_dates: The dates and times at which the volumes
+        were created.
+        :type       creation_dates: ``List`` of ``str```
+
+        :param      link_volume_del_on_vm_del: Indicates whether the volumes
+        are deleted when terminating the VMs.
+        :type       link_volume_del_on_vm_del: ``bool``
+
+        :param      link_volume_device_names: The VM device names.
+        :type       link_volume_device_names: ``List`` of ``str``
+
+        :param      link_volume_link_dates: The dates and times at which the
+        volumes were created.
+        :type       link_volume_link_dates: ``List`` of ``str``
+
+        :param      link_volume_link_states: The attachment states of the
+        volumes (attaching | detaching | attached | detached).
+        :type       link_volume_link_states: ``List`` of ``str``
+
+        :param      link_volume_vm_ids: One or more IDs of VMs.
+        :type       link_volume_vm_ids: ``List`` of ``str``
+
+        :param      snapshot_ids: The snapshots from which the volumes were
+        created.
+        :type       snapshot_ids: ``List`` of ``str``
+
+        :param      subregion_names: The names of the Subregions in which the
+        volumes were created.
+        :type       subregion_names: ``List`` of ``str``
+
+        :param      tag_keys: The keys of the tags associated with the volumes.
+        :type       tag_keys: ``List`` of ``str``
+
+        :param      tag_values: The values of the tags associated with the
+        volumes.
+        :type       tag_values: ``List`` of ``str``
+
+        :param      tags: The key/value combination of the tags associated
+        with the volumes, in the following format:
+        "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
+        :type       tags: ``List`` of ``str``
+
+        :param      volume_ids: The IDs of the volumes.
+        :type       volume_ids: ``List`` of ``str``
+
+        :param      volume_sizes: The sizes of the volumes, in gibibytes (GiB).
+        :type       volume_sizes: ``List`` of ``int``
+
+        :param      volume_states: The states of the volumes
+        (creating | available | in-use | updating | deleting | error).
+        :type       volume_states: ``List`` of ``str``
+
+        :param      volume_types: The types of the volumes
+        (standard | gp2 | io1).
+        :type       volume_types: ``List`` of ``str``
+
+        :param      ex_dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       ex_dry_run: ``bool``
+
+        :rtype: ``List`` of :class:`.StorageVolume`
         """
         action = "ReadVolumes"
-        response = self._call_api(action, ex_data)
+        data = {"DryRun": ex_dry_run, "Filters": {}}
+        if creation_dates is not None:
+            data["Filters"].update({"CreationDates": creation_dates})
+        if link_volume_del_on_vm_del is not None:
+            data["Filters"].update({
+                "LinkVolumeDeleteOnVolumeDeletion": link_volume_del_on_vm_del
+            })
+        if link_volume_device_names is not None:
+            data["Filters"].update({
+                "LinkVolumeDeviceNames": link_volume_device_names
+            })
+        if link_volume_link_dates is not None:
+            data["Filters"].update({
+                "LinkVolumeLinkDates": link_volume_link_dates
+            })
+        if link_volume_link_states is not None:
+            data["Filters"].update({
+                "LinkVolumeLinkStates": link_volume_link_states
+            })
+        if link_volume_vm_ids is not None:
+            data["Filters"].update({"LinkVolumeVmIds": link_volume_vm_ids})
+        if snapshot_ids is not None:
+            data["Filters"].update({"SnapshotIds": snapshot_ids})
+        if subregion_names is not None:
+            data["Filters"].update({"SubregionNames": subregion_names})
+        if tag_keys is not None:
+            data["Filters"].update({"TagKeys": tag_keys})
+        if tags is not None:
+            data["Filters"].update({"Tags": tags})
+        if volume_ids is not None:
+            data["Filters"].update({"VolumeIds": volume_ids})
+        if volume_sizes is not None:
+            data["Filters"].update({"VolumeSizes": volume_sizes})
+        if volume_states is not None:
+            data["Filters"].update({"VolumeStates": volume_states})
+        if volume_types is not None:
+            data["Filters"].update({"VolumeTypes": volume_types})
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_volumes(response.json()["Volumes"])
         return response.json()
@@ -1853,8 +2169,8 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``bool``
         """
         action = "DeleteVolume"
-        data = '{"VolumeId": "' + volume.id + '"}'
-        response = self._call_api(action, data)
+        data = {"VolumeId": volume.id}
+        response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return True
         return response.json()
@@ -2002,7 +2318,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       dry_run: ``bool``
 
         :return: a list of Consumption Entries
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadConsumptionAccount"
         data = {"DryRun": dry_run}
@@ -2011,7 +2327,6 @@ class OutscaleNodeDriver(NodeDriver):
         if to_date is not None:
             data.update({"ToDate": to_date})
         response = self._call_api(action, json.dumps(data))
-        print(response.status_code)
         if response.status_code == 200:
             return response.json()["ConsumptionEntries"]
         return response.json()
@@ -2297,7 +2612,7 @@ class OutscaleNodeDriver(NodeDriver):
         You can tag the following resources using their IDs:
 
         :param      resource_ids: One or more resource IDs. (required)
-        :type       resource_ids: ``list``
+        :type       resource_ids: ``List``
 
         :param      tag_key: The key of the tag, with a minimum of 1 character.
         (required)
@@ -2336,11 +2651,11 @@ class OutscaleNodeDriver(NodeDriver):
         You can tag the following resources using their IDs:
 
         :param      resource_ids: One or more resource IDs. (required)
-        :type       resource_ids: ``list``
+        :type       resource_ids: ``List``
 
         :param      tags: The key of the tag, with a minimum of 1 character.
         (required)
-        :type       tags: ``list`` of ``dict``
+        :type       tags: ``List`` of ``dict``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -2366,11 +2681,11 @@ class OutscaleNodeDriver(NodeDriver):
         Deletes one or more tags from the specified resources.
 
         :param      resource_ids: One or more resource IDs. (required)
-        :type       resource_ids: ``list``
+        :type       resource_ids: ``List``
 
         :param      tags: The key of the tag, with a minimum of 1 character.
         (required)
-        :type       tags: ``list`` of ``dict``
+        :type       tags: ``List`` of ``dict``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -2398,23 +2713,23 @@ class OutscaleNodeDriver(NodeDriver):
         Lists one or more tags for your resources.
 
         :param      resource_ids: One or more resource IDs.
-        :type       resource_ids: ``list``
+        :type       resource_ids: ``List``
 
         :param      resource_types: One or more resource IDs.
-        :type       resource_types: ``list``
+        :type       resource_types: ``List``
 
         :param      keys: One or more resource IDs.
-        :type       keys: ``list``
+        :type       keys: ``List``
 
         :param      values: One or more resource IDs.
-        :type       values: ``list``
+        :type       values: ``List``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: list of tags
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadTags"
         data = {"Filters": {}, "DryRun": dry_run}
@@ -2503,17 +2818,17 @@ class OutscaleNodeDriver(NodeDriver):
         an empty list.
 
         :param      access_key_ids: The IDs of the access keys.
-        :type       access_key_ids: ``list`` of ``str``
+        :type       access_key_ids: ``List`` of ``str``
 
         :param      states: The states of the access keys (ACTIVE | INACTIVE).
-        :type       states: ``list`` of ``str``
+        :type       states: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: ``list`` of Access Keys
-        :rtype: ``list`` of ``dict``
+        :return: ``List`` of Access Keys
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadAccessKeys"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -2658,44 +2973,44 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      client_gateway_ids: The IDs of the client gateways.
         you want to delete. (required)
-        :type       client_gateway_ids: ``list`` of ``str`
+        :type       client_gateway_ids: ``List`` of ``str`
 
         :param      bgp_asns: The Border Gateway Protocol (BGP) Autonomous
         System Numbers (ASNs) of the connections.
-        :type       bgp_asns: ``list`` of ``int``
+        :type       bgp_asns: ``List`` of ``int``
 
         :param      connection_types: The types of communication tunnels
         used by the client gateways (only ipsec.1 is supported).
         (required)
-        :type       connection_types: ``list```of ``str``
+        :type       connection_types: ``List```of ``str``
 
         :param      public_ips: The public IPv4 addresses of the
         client gateways.
-        :type       public_ips: ``list`` of ``str``
+        :type       public_ips: ``List`` of ``str``
 
         :param      states: The states of the client gateways
         (pending | available | deleting | deleted).
-        :type       states: ``list`` of ``str``
+        :type       states: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with
         the client gateways.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         client gateways.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: TThe key/value combination of the tags
         associated with the client gateways, in the following
         format: "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: Returns ``list`` of Client Gateway
-        :rtype: ``list`` of ``dict``
+        :return: Returns ``List`` of Client Gateway
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadClientGateways"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -2769,11 +3084,11 @@ class OutscaleNodeDriver(NodeDriver):
         :param      domaine_name_servers: The IP addresses of domain name
         servers. If no IP addresses are specified, the OutscaleProvidedDNS
         value is set by default.
-        :type       domaine_name_servers: ``list`` of ``str``
+        :type       domaine_name_servers: ``List`` of ``str``
 
         :param      ntp_servers: The IP addresses of the Network Time
         Protocol (NTP) servers.
-        :type       ntp_servers: ``list`` of ``str``
+        :type       ntp_servers: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -2845,42 +3160,42 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      default: SIf true, lists all default DHCP options set.
         If false, lists all non-default DHCP options set.
-        :type       default: ``list`` of ``bool``
+        :type       default: ``List`` of ``bool``
 
         :param      dhcp_options_set_id: The IDs of the DHCP options sets.
-        :type       dhcp_options_set_id: ``list`` of ``str``
+        :type       dhcp_options_set_id: ``List`` of ``str``
 
         :param      domaine_names: The domain names used for the DHCP
         options sets.
-        :type       domaine_names: ``list`` of ``str``
+        :type       domaine_names: ``List`` of ``str``
 
         :param      domaine_name_servers: The domain name servers used for
         the DHCP options sets.
-        :type       domaine_name_servers: ``list`` of ``str``
+        :type       domaine_name_servers: ``List`` of ``str``
 
         :param      ntp_servers: The Network Time Protocol (NTP) servers used
         for the DHCP options sets.
-        :type       ntp_servers: ``list`` of ``str``
+        :type       ntp_servers: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the DHCP
         options sets.
-        :type       ntp_servers: ``list`` of ``str``
+        :type       ntp_servers: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         DHCP options sets.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The key/value combination of the tags associated
         with the DHCP options sets, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: a ``list`` of Dhcp Options
-        :rtype: ``list`` of ``dict``
+        :return: a ``List`` of Dhcp Options
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadDhcpOptions"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -2989,14 +3304,14 @@ class OutscaleNodeDriver(NodeDriver):
         Lists all DirectLinks in the Region.
 
         :param      direct_link_ids: The IDs of the DirectLinks. (required)
-        :type       direct_link_ids: ``list`` of ``str``
+        :type       direct_link_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: ``list`` of  Direct Links
-        :rtype: ``list`` of ``dict``
+        :return: ``List`` of  Direct Links
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadDirectLinks"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -3135,17 +3450,17 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      direct_link_interface_ids: The IDs of the DirectLink
         interfaces.
-        :type       direct_link_interface_ids: ``list`` of ``str``
+        :type       direct_link_interface_ids: ``List`` of ``str``
 
         :param      direct_link_ids: The IDs of the DirectLinks.
-        :type       direct_link_ids: ``list`` of ``str``
+        :type       direct_link_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: ``list`` of  Direct Link interfaces
-        :rtype: ``list`` of ``dict``
+        :return: ``List`` of  Direct Link interfaces
+        :rtype: ``List`` of ``dict``
         """
         action = "DeleteDirectLink"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -3326,7 +3641,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       dry_run: ``bool``
 
         :return: Returns the Flexible Gpu Catalog
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadFlexibleGpuCatalog"
         data = {"DryRun": dry_run}
@@ -3354,35 +3669,35 @@ class OutscaleNodeDriver(NodeDriver):
         :type       delete_on_vm_deletion: ``bool``
 
         :param      flexible_gpu_ids: One or more IDs of fGPUs.
-        :type       flexible_gpu_ids: ``list`` of ``str``
+        :type       flexible_gpu_ids: ``List`` of ``str``
 
         :param      generations: The processor generations that the fGPUs are
         compatible with.
         (required)
-        :type       generations: ``list`` of ``str``
+        :type       generations: ``List`` of ``str``
 
         :param      model_names: One or more models of fGPUs. For more
         information, see About Flexible GPUs:
         https://wiki.outscale.net/display/EN/About+Flexible+GPUs
-        :type       model_names: ``list`` of ``str``
+        :type       model_names: ``List`` of ``str``
 
         :param      states: The states of the fGPUs
         (allocated | attaching | attached | detaching).
-        :type       states: ``list`` of ``str``
+        :type       states: ``List`` of ``str``
 
         :param      subregion_names: The Subregions where the fGPUs are
         located.
-        :type       subregion_names: ``list`` of ``str``
+        :type       subregion_names: ``List`` of ``str``
 
         :param      vm_ids: One or more IDs of VMs.
-        :type       vm_ids: ``list`` of ``str``
+        :type       vm_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: Returns the Flexible Gpu Catalog
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadFlexibleGpus"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -3590,36 +3905,36 @@ class OutscaleNodeDriver(NodeDriver):
         a default Subnet has a private and a public IP addresses.
 
         :param      internet_service_ids: One or more filters.
-        :type       internet_service_ids: ``list`` of ``str``
+        :type       internet_service_ids: ``List`` of ``str``
 
         :param      link_net_ids: The IDs of the Nets the Internet services
         are attached to.
-        :type       link_net_ids: ``list`` of ``str``
+        :type       link_net_ids: ``List`` of ``str``
 
         :param      link_states: The current states of the attachments
         between the Internet services and the Nets (only available,
         if the Internet gateway is attached to a VPC). (required)
-        :type       link_states: ``list`` of ``str``
+        :type       link_states: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the
         Internet services.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         Internet services.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The key/value combination of the tags associated
         with the Internet services, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: Returns the list of Internet Services
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadInternetServices"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -3665,7 +3980,7 @@ class OutscaleNodeDriver(NodeDriver):
         https://docs.outscale.com/api#registervmsinloadbalancer
 
         :param      vms: The IDs of the backend VMs. (required)
-        :type       vms: ``list`` of ``Node``
+        :type       vms: ``List`` of ``Node``
 
         :param      l_load_balancer_name: The name of the load balancer to
         which the listener is attached. (required)
@@ -3861,7 +4176,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      load_balancer_ports: One or more port numbers of the
         listeners you want to delete.. (required)
-        :type       load_balancer_ports: ``list`` of ``int``
+        :type       load_balancer_ports: ``List`` of ``int``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -3891,14 +4206,14 @@ class OutscaleNodeDriver(NodeDriver):
         the full list of listener rules for the account.
 
         :param      listener_rule_names: The names of the listener rules.
-        :type       listener_rule_names: ``list`` of ``str``
+        :type       listener_rule_names: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: Returns the list of Listener Rules
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadListenerRules"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -3994,25 +4309,25 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      security_groups: One or more IDs of security groups you
         want to assign to the load balancer.
-        :type       security_groups: ``list`` of ``str``
+        :type       security_groups: ``List`` of ``str``
 
         :param      subnets: One or more IDs of Subnets in your Net that you
         want to attach to the load balancer.
-        :type       subnets: ``list`` of ``str``
+        :type       subnets: ``List`` of ``str``
 
         :param      subregion_names: One or more names of Subregions
         (currently, only one Subregion is supported). This parameter is not
         required if you create a load balancer in a Net. To create an internal
         load balancer, use the LoadBalancerType parameter.
-        :type       subregion_names: ``list`` of ``str``
+        :type       subregion_names: ``List`` of ``str``
 
         :param      tag_keys: The key of the tag, with a minimum of 1
         character. (required)
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The value of the tag, between 0 and 255
         characters. (required)
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      l_backend_port: The port on which the back-end VM is
         listening (between 1 and 65535, both included). (required)
@@ -4100,11 +4415,11 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      tag_keys: The key of the tag, with a minimum of 1
         character. (required)
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The value of the tag, between 0 and 255
         characters. (required)
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -4234,14 +4549,14 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      load_balancer_names: The names of the load balancer.
         (required)
-        :type       load_balancer_names: ``list`` of ``str``
+        :type       load_balancer_names: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of load balancer tags
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadLoadBalancerTags"
         data = {"DryRun": dry_run}
@@ -4262,14 +4577,14 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      load_balancer_names: The names of the load balancer.
         (required)
-        :type       load_balancer_names: ``list`` of ``str``
+        :type       load_balancer_names: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of load balancer
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadLoadBalancers"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -4295,14 +4610,14 @@ class OutscaleNodeDriver(NodeDriver):
         :type       load_balancer_name: ``str``
 
         :param      backend_vm_ids: One or more IDs of back-end VMs.
-        :type       backend_vm_ids: ``list`` of ``str``
+        :type       backend_vm_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of back end vms health
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadVmsHealth"
         data = {"DryRun": dry_run}
@@ -4335,14 +4650,14 @@ class OutscaleNodeDriver(NodeDriver):
         :type       load_balancer_name: ``str``
 
         :param      backend_vm_ids: One or more IDs of back-end VMs.
-        :type       backend_vm_ids: ``list`` of ``str``
+        :type       backend_vm_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of back end vms health
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "RegisterVmsInLoadBalancer"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -4448,7 +4763,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      policy_names: The list of policy names (must contain all
         the policies to be enabled).
-        :type       policy_names: ``list`` of ``str``
+        :type       policy_names: ``List`` of ``str``
 
         :param      server_certificate_id: The list of policy names (must
         contain all the policies to be enabled).
@@ -4716,37 +5031,37 @@ class OutscaleNodeDriver(NodeDriver):
         Lists one or more network address translation (NAT) services.
 
         :param      nat_service_ids: The IDs of the NAT services.
-        :type       nat_service_ids: ``list`` of ``str``
+        :type       nat_service_ids: ``List`` of ``str``
 
         :param      net_ids: The IDs of the Nets in which the NAT services are.
-        :type       net_ids: ``list`` of ``str``
+        :type       net_ids: ``List`` of ``str``
 
         :param      states: The states of the NAT services
         (pending | available | deleting | deleted).
-        :type       states: ``list`` of ``str``
+        :type       states: ``List`` of ``str``
 
         :param      subnet_ids: The IDs of the Subnets in which the NAT
         services are.
-        :type       subnet_ids: ``list`` of ``str``
+        :type       subnet_ids: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the NAT
         services.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the NAT
         services.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The values of the tags associated with the NAT
         services.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of back end vms health
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadNatServices"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -4863,39 +5178,39 @@ class OutscaleNodeDriver(NodeDriver):
         Lists one or more Nets.
 
         :param      dhcp_options_set_ids: The IDs of the DHCP options sets.
-        :type       dhcp_options_set_ids: ``list`` of ``str``
+        :type       dhcp_options_set_ids: ``List`` of ``str``
 
         :param      ip_ranges: The IP ranges for the Nets, in CIDR notation
         (for example, 10.0.0.0/16).
-        :type       ip_ranges: ``list`` of ``str``
+        :type       ip_ranges: ``List`` of ``str``
 
         :param      is_default: If true, the Net used is the default one.
         :type       is_default: ``bool``
 
         :param      net_ids: The IDs of the Nets.
-        :type       net_ids: ``list`` of ``str``
+        :type       net_ids: ``List`` of ``str``
 
         :param      states: The states of the Nets (pending | available).
-        :type       states: ``list`` of ``str``
+        :type       states: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the Nets.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         Nets.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The key/value combination of the tags associated
         with the Nets, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: A list of Nets
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadNets"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -4980,7 +5295,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      route_table_ids: One or more IDs of route tables to use
         for the connection.
-        :type       route_table_ids: ``list`` of ``str``
+        :type       route_table_ids: ``List`` of ``str``
 
         :param      service_name: The prefix list name corresponding to the
         service (for example, com.outscale.eu-west-2.osu for OSU). (required)
@@ -5048,18 +5363,18 @@ class OutscaleNodeDriver(NodeDriver):
         https://docs.outscale.com/api#createnetaccesspoint
 
         :param      service_ids: The IDs of the services.
-        :type       service_ids: ``list`` of ``str``
+        :type       service_ids: ``List`` of ``str``
 
         :param      service_names: The names of the prefix lists, which
         identify the 3DS OUTSCALE services they are associated with.
-        :type       service_names: ``list`` of ``str``
+        :type       service_names: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: A list of Services
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadNetAccessPointServices"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -5087,40 +5402,40 @@ class OutscaleNodeDriver(NodeDriver):
         Describes one or more Net access points.
 
         :param      net_access_point_ids: The IDs of the Net access points.
-        :type       net_access_point_ids: ``list`` of ``str``
+        :type       net_access_point_ids: ``List`` of ``str``
 
         :param      net_ids: The IDs of the Nets.
-        :type       net_ids: ``list`` of ``str``
+        :type       net_ids: ``List`` of ``str``
 
         :param      service_names: The The names of the prefix lists
         corresponding to the services. For more information,
         see DescribePrefixLists:
         https://docs.outscale.com/api#describeprefixlists
-        :type       service_names: ``list`` of ``str``
+        :type       service_names: ``List`` of ``str``
 
         :param      states: The states of the Net access points
         (pending | available | deleting | deleted).
-        :type       states: ``list`` of ``str``
+        :type       states: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the Net
         access points.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         Net access points.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The key/value combination of the tags associated
         with the Net access points, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: A list of Net Access Points
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadNetAccessPoints"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -5157,7 +5472,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      add_route_table_ids: One or more IDs of route tables to
         associate with the specified Net access point.
-        :type       add_route_table_ids: ``list`` of ``str``
+        :type       add_route_table_ids: ``List`` of ``str``
 
         :param      net_access_point_id: The ID of the Net access point.
         (required)
@@ -5165,7 +5480,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      remove_route_table_ids: One or more IDs of route tables to
         disassociate from the specified Net access point.
-        :type       remove_route_table_ids: ``list`` of ``str``
+        :type       remove_route_table_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -5316,55 +5631,55 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      accepter_net_account_ids: The account IDs of the owners of
         the peer Nets.
-        :type       accepter_net_account_ids: ``list`` of ``str``
+        :type       accepter_net_account_ids: ``List`` of ``str``
 
         :param      accepter_net_ip_ranges: The IP ranges of the peer Nets, in
         CIDR notation (for example, 10.0.0.0/24).
-        :type       accepter_net_ip_ranges: ``list`` of ``str``
+        :type       accepter_net_ip_ranges: ``List`` of ``str``
 
         :param      accepter_net_net_ids: The IDs of the peer Nets.
-        :type       accepter_net_net_ids: ``list`` of ``str``
+        :type       accepter_net_net_ids: ``List`` of ``str``
 
         :param      source_net_account_ids: The account IDs of the owners of
         the peer Nets.
-        :type       source_net_account_ids: ``list`` of ``str``
+        :type       source_net_account_ids: ``List`` of ``str``
 
         :param      source_net_ip_ranges: The IP ranges of the peer Nets.
-        :type       source_net_ip_ranges: ``list`` of ``str``
+        :type       source_net_ip_ranges: ``List`` of ``str``
 
         :param      source_net_net_ids: The IDs of the peer Nets.
-        :type       source_net_net_ids: ``list`` of ``str``
+        :type       source_net_net_ids: ``List`` of ``str``
 
         :param      net_peering_ids: The IDs of the Net peering connections.
-        :type       net_peering_ids: ``list`` of ``str``
+        :type       net_peering_ids: ``List`` of ``str``
 
         :param      state_messages: Additional information about the states of
         the Net peering connections.
-        :type       state_messages: ``list`` of ``str``
+        :type       state_messages: ``List`` of ``str``
 
         :param      states_names: The states of the Net peering connections
         (pending-acceptance | active | rejected | failed | expired | deleted).
-        :type       states_names: ``list`` of ``str``
+        :type       states_names: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the Net
         peering connections.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: TThe values of the tags associated with the
         Net peering connections.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The key/value combination of the tags associated
         with the Net peering connections, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: A list of Net Access Points
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadNetPeerings"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -5453,18 +5768,18 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      private_ips_is_primary: If true, the IP address is the
         primary private IP address of the NIC.
-        :type       private_ips_is_primary: ``list`` of ``str``
+        :type       private_ips_is_primary: ``List`` of ``str``
 
         :param      private_ips: The private IP addresses of the NIC.
-        :type       private_ips: ``list`` of ``str``
+        :type       private_ips: ``List`` of ``str``
 
         :param      security_group_ids: One or more IDs of security groups for
         the NIC.
-        :type       security_group_ids: ``list`` of ``str``
+        :type       security_group_ids: ``List`` of ``str``
 
         :param      subnet_id: The ID of the Subnet in which you want to
         create the NIC. (required)
-        :type       subnet_id: ``list`` of ``str``
+        :type       subnet_id: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -5621,7 +5936,7 @@ class OutscaleNodeDriver(NodeDriver):
         :param      private_ips: The secondary private IP address or addresses
         you want to assign to the NIC within the IP address range of the
         Subnet.
-        :type       private_ips: ``list`` of ``str``
+        :type       private_ips: ``List`` of ``str``
 
         :param      secondary_private_ip_count: The secondary private IP a
         ddress or addresses you want to assign to the NIC within the IP
@@ -5668,28 +5983,28 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      link_nic_sort_numbers: The device numbers the NICs are
         attached to.
-        :type       link_nic_sort_numbers: ``list`` of ``int``
+        :type       link_nic_sort_numbers: ``List`` of ``int``
 
         :param      link_nic_vm_ids: The IDs of the VMs the NICs are attached
         to.
-        :type       link_nic_vm_ids: ``list`` of ``str``
+        :type       link_nic_vm_ids: ``List`` of ``str``
 
         :param      nic_ids: The IDs of the NICs.
-        :type       nic_ids: ``list`` of ``str``
+        :type       nic_ids: ``List`` of ``str``
 
         :param      private_ips_private_ips: The private IP addresses of the
         NICs.
-        :type       private_ips_private_ips: ``list`` of ``str``
+        :type       private_ips_private_ips: ``List`` of ``str``
 
         :param      subnet_ids: The IDs of the Subnets for the NICs.
-        :type       subnet_ids: ``list`` of ``str``
+        :type       subnet_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: A list of the Nics
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadNics"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -5731,7 +6046,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      private_ips: One or more secondary private IP addresses
         you want to unassign from the NIC. (required)
-        :type       private_ips: ``list`` of ``str``
+        :type       private_ips: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -5776,10 +6091,10 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      security_group_ids: One or more IDs of security groups
         for the NIC.
-        :type       security_group_ids: ``list`` of ``str``
+        :type       security_group_ids: ``List`` of ``str``
 
         :param      nic_id: The ID of the NIC you want to modify. (required)
-        :type       nic_id: ``list`` of ``str``
+        :type       nic_id: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -5818,14 +6133,14 @@ class OutscaleNodeDriver(NodeDriver):
         Describes one or more product types.
 
         :param      product_type_ids: The IDs of the product types.
-        :type       product_type_ids: ``list`` of ``str``
+        :type       product_type_ids: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: A ``list`` of Product Type
-        :rtype: ``list`` of ``dict``
+        :return: A ``List`` of Product Type
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadProductTypes"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -5850,24 +6165,24 @@ class OutscaleNodeDriver(NodeDriver):
         Describes one or more of your quotas.
 
         :param      collections: The group names of the quotas.
-        :type       collections: ``list`` of ``str``
+        :type       collections: ``List`` of ``str``
 
         :param      quota_names: The names of the quotas.
-        :type       quota_names: ``list`` of ``str``
+        :type       quota_names: ``List`` of ``str``
 
         :param      quota_types: The resource IDs if these are
         resource-specific quotas, global if they are not.
-        :type       quota_types: ``list`` of ``str``
+        :type       quota_types: ``List`` of ``str``
 
         :param      short_descriptions: The description of the quotas.
-        :type       short_descriptions: ``list`` of ``str``
+        :type       short_descriptions: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
-        :return: A ``list`` of Product Type
-        :rtype: ``list`` of ``dict``
+        :return: A ``List`` of Product Type
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadQuotas"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -6208,11 +6523,11 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      link_route_table_ids: The IDs of the route tables involved
         in the associations.
-        :type       link_route_table_ids: ``list`` of ``str``
+        :type       link_route_table_ids: ``List`` of ``str``
 
         :param      link_route_table_link_route_table_ids: The IDs of the
         associations between the route tables and the Subnets.
-        :type       link_route_table_link_route_table_ids: ``list`` of ``str``
+        :type       link_route_table_link_route_table_ids: ``List`` of ``str``
 
         :param      link_route_table_main: If true, the route tables are the
         main ones for their Nets.
@@ -6220,66 +6535,66 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      link_subnet_ids: The IDs of the Subnets involved in the
         associations.
-        :type       link_subnet_ids: ``list`` of ``str``
+        :type       link_subnet_ids: ``List`` of ``str``
 
         :param      net_ids: The IDs of the route tables involved
         in the associations.
-        :type       net_ids: ``list`` of ``str``
+        :type       net_ids: ``List`` of ``str``
 
         :param      route_creation_methods: The methods used to create a route.
-        :type       route_creation_methods: ``list`` of ``str``
+        :type       route_creation_methods: ``List`` of ``str``
 
         :param      route_destination_ip_ranges: The IP ranges specified in
         routes in the tables.
-        :type       route_destination_ip_ranges: ``list`` of ``str``
+        :type       route_destination_ip_ranges: ``List`` of ``str``
 
         :param      route_destination_service_ids: The service IDs specified
         in routes in the tables.
-        :type       route_destination_service_ids: ``list`` of ``str``
+        :type       route_destination_service_ids: ``List`` of ``str``
 
         :param      route_gateway_ids: The IDs of the gateways specified in
         routes in the tables.
-        :type       route_gateway_ids: ``list`` of ``str``
+        :type       route_gateway_ids: ``List`` of ``str``
 
         :param      route_nat_service_ids: The IDs of the NAT services
         specified in routes in the tables.
-        :type       route_nat_service_ids: ``list`` of ``str``
+        :type       route_nat_service_ids: ``List`` of ``str``
 
         :param      route_net_peering_ids: The IDs of the Net peering
         connections specified in routes in the tables.
-        :type       route_net_peering_ids: ``list`` of ``str``
+        :type       route_net_peering_ids: ``List`` of ``str``
 
         :param      route_states: The states of routes in the route tables
         (active | blackhole). The blackhole state indicates that the target
         of the route is not available.
-        :type       route_states: ``list`` of ``str``
+        :type       route_states: ``List`` of ``str``
 
         :param      route_table_ids: The IDs of the route tables.
-        :type       route_table_ids: ``list`` of ``str``
+        :type       route_table_ids: ``List`` of ``str``
 
         :param      route_vm_ids: The IDs of the VMs specified in routes in
         the tables.
-        :type       route_vm_ids: ``list`` of ``str``
+        :type       route_vm_ids: ``List`` of ``str``
 
         :param      tag_keys: The keys of the tags associated with the route
         tables.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         route tables.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: The key/value combination of the tags associated
         with the route tables, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: list of Route Tables
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadRouteTables"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -6501,7 +6816,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       dry_run: ``bool``
 
         :return: server certificate
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadServerCertificates"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -6662,30 +6977,30 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      account_ids: The account IDs of the owners of the security
         groups.
-        :type       account_ids: ``list`` of ``str``
+        :type       account_ids: ``List`` of ``str``
 
         :param      net_ids: The IDs of the Nets specified when the security
         groups were created.
-        :type       net_ids: ``list`` of ``str``
+        :type       net_ids: ``List`` of ``str``
 
         :param      security_group_ids: The IDs of the security groups.
-        :type       security_group_ids: ``list`` of ``str``
+        :type       security_group_ids: ``List`` of ``str``
 
         :param      security_group_names: The names of the security groups.
-        :type       security_group_names: ``list`` of ``str``
+        :type       security_group_names: ``List`` of ``str``
 
         :param      tag_keys: TThe keys of the tags associated with the
         security groups.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         security groups.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: TThe key/value combination of the tags associated
         with the security groups, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
 
         :param      dry_run: If true, checks whether you have the required
@@ -6693,7 +7008,7 @@ class OutscaleNodeDriver(NodeDriver):
         :type       dry_run: ``bool``
 
         :return: a list of Security Groups
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadSecurityGroups"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -6781,7 +7096,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      rules: Information about the security group rule to create:
         https://docs.outscale.com/api#createsecuritygrouprule
-        :type       rules: ``list`` of  ``dict``
+        :type       rules: ``List`` of  ``dict``
 
         :param      sg_account_id_to_link: The account ID of the
         owner of the security group for which you want to create a rule.
@@ -6878,7 +7193,7 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      rules: Information about the security group rule to create:
         https://docs.outscale.com/api#createsecuritygrouprule
-        :type       rules: ``list`` of  ``dict``
+        :type       rules: ``List`` of  ``dict``
 
         :param      sg_account_id_to_unlink: The account ID of the
         owner of the security group for which you want to delete a rule.
@@ -7045,43 +7360,43 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      connection_types: The types of the virtual gateways
         (only ipsec.1 is supported).
-        :type       connection_types: ``list`` of ``dict``
+        :type       connection_types: ``List`` of ``dict``
 
         :param      link_net_ids: The IDs of the Nets the virtual gateways
         are attached to.
-        :type       link_net_ids: ``list`` of ``dict``
+        :type       link_net_ids: ``List`` of ``dict``
 
         :param      link_states: The current states of the attachments
         between the virtual gateways and the Nets
         (attaching | attached | detaching | detached).
-        :type       link_states: ``list`` of ``dict``
+        :type       link_states: ``List`` of ``dict``
 
         :param      states: The states of the virtual gateways
         (pending | available | deleting | deleted).
-        :type       states: ``list`` of ``dict``
+        :type       states: ``List`` of ``dict``
 
         :param      tag_keys: The keys of the tags associated with the
         virtual gateways.
-        :type       tag_keys: ``list`` of ``dict``
+        :type       tag_keys: ``List`` of ``dict``
 
         :param      tag_values: The values of the tags associated with
         the virtual gateways.
-        :type       tag_values: ``list`` of ``dict``
+        :type       tag_values: ``List`` of ``dict``
 
         :param      tags: The key/value combination of the tags associated
         with the virtual gateways, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``dict``
+        :type       tags: ``List`` of ``dict``
 
         :param      virtual_gateway_id: The IDs of the virtual gateways.
-        :type       virtual_gateway_id: ``list`` of ``dict``
+        :type       virtual_gateway_id: ``List`` of ``dict``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: list of virtual gateway
-        :rtype: ``list`` of ``dict``
+        :rtype: ``List`` of ``dict``
         """
         action = "ReadVirtualGateways"
         data = {"Filters": {}, "DryRun": dry_run}
@@ -7296,23 +7611,23 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      tag_keys: TThe keys of the tags associated with the
         subnets.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         subnets.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: TThe key/value combination of the tags associated
         with the subnets, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of Subnets
-        :rtype: ``list`` of  ``dict``
+        :rtype: ``List`` of  ``dict``
         """
         action = "ReadSubnets"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -7621,14 +7936,14 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      bgp_asns: The Border Gateway Protocol (BGP) Autonomous
         System Numbers (ASNs) of the connections.
-        :type       bgp_asns: ``list`` of ``int``
+        :type       bgp_asns: ``List`` of ``int``
 
         :param      client_gateway_ids: The IDs of the client gateways.
-        :type       client_gateway_ids: ``list`` of ``str``
+        :type       client_gateway_ids: ``List`` of ``str``
 
         :param      connection_types: The types of the VPN connections (only
         ipsec.1 is supported).
-        :type       connection_types: ``list`` of ``str``
+        :type       connection_types: ``List`` of ``str``
 
         :param      states: The states of the vpn connections
         (pending | available).
@@ -7648,23 +7963,23 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      tag_keys: TThe keys of the tags associated with the
         subnets.
-        :type       tag_keys: ``list`` of ``str``
+        :type       tag_keys: ``List`` of ``str``
 
         :param      tag_values: The values of the tags associated with the
         subnets.
-        :type       tag_values: ``list`` of ``str``
+        :type       tag_values: ``List`` of ``str``
 
         :param      tags: TThe key/value combination of the tags associated
         with the subnets, in the following format:
         "Filters":{"Tags":["TAGKEY=TAGVALUE"]}.
-        :type       tags: ``list`` of ``str``
+        :type       tags: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of Subnets
-        :rtype: ``list`` of  ``dict``
+        :rtype: ``List`` of  ``dict``
         """
         action = "ReadVpnConnections"
         data = {"DryRun": dry_run, "Filters": {}}
@@ -7775,13 +8090,13 @@ class OutscaleNodeDriver(NodeDriver):
         Authorities (CAs).
 
         :param      ca_fingerprints: The fingerprints of the CAs.
-        :type       ca_fingerprints: ``list`` of ``str``
+        :type       ca_fingerprints: ``List`` of ``str``
 
         :param      ca_ids: The IDs of the CAs.
-        :type       ca_ids: ``list`` of ``str``
+        :type       ca_ids: ``List`` of ``str``
 
         :param      descriptions: The descriptions of the CAs.
-        :type       descriptions: ``list`` of ``str``
+        :type       descriptions: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -7849,16 +8164,16 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      ip_ranges: One or more IP ranges, in CIDR notation
         (for example, 192.0.2.0/16).
-        :type       ip_ranges: ``list`` of ``str``
+        :type       ip_ranges: ``List`` of ``str``
 
         :param      ca_ids: One or more IDs of Client Certificate Authorities
         (CAs).
-        :type       ca_ids: ``list`` of ``str``
+        :type       ca_ids: ``List`` of ``str``
 
         :param      cns: One or more Client Certificate Common Names (CNs).
         If this parameter is specified, you must also specify the ca_ids
         parameter.
-        :type       cns: ``list`` of ``str``
+        :type       cns: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
@@ -7922,28 +8237,28 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      api_access_rules_ids: The list containing rules ids to
         filter the request.
-        :type       api_access_rules_ids: ``list`` of ``str``
+        :type       api_access_rules_ids: ``List`` of ``str``
 
         :param      ca_ids: The list containing CA ids to filter the request.
-        :type       ca_ids: ``list`` of ``str``
+        :type       ca_ids: ``List`` of ``str``
 
         :param      cns: The list containing cns to filter the request.
-        :type       cns: ``list`` of ``str``
+        :type       cns: ``List`` of ``str``
 
         :param      descriptions: The list containing descriptions to filter
         the request.
-        :type       descriptions: ``list`` of ``str``
+        :type       descriptions: ``List`` of ``str``
 
         :param      ip_ranges: The list containing ip ranges in CIDR notation
         (for example, 192.0.2.0/16) to filter the request.
-        :type       ip_ranges: ``list`` of ``str``
+        :type       ip_ranges: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of API access rules.
-        :rtype: ``list`` of ``dict`` if successfull or  ``dict``
+        :rtype: ``List`` of ``dict`` if successfull or  ``dict``
         """
 
         action = "ReadApiAccessRules"
@@ -7984,26 +8299,26 @@ class OutscaleNodeDriver(NodeDriver):
 
         :param      ca_ids: One or more IDs of Client Certificate Authorities
         (CAs).
-        :type       ca_ids: ``list`` of ``str``
+        :type       ca_ids: ``List`` of ``str``
 
         :param      cns: One or more Client Certificate Common Names (CNs).
         If this parameter is specified, you must also specify the ca_ids
         parameter.
-        :type       cns: ``list`` of ``str``
+        :type       cns: ``List`` of ``str``
 
         :param      description: The description of the new rule.
         :type       description: ``str``
 
         :param      ip_ranges: One or more IP ranges, in CIDR notation
         (for example, 192.0.2.0/16).
-        :type       ip_ranges: ``list`` of ``str``
+        :type       ip_ranges: ``List`` of ``str``
 
         :param      dry_run: If true, checks whether you have the required
         permissions to perform the action.
         :type       dry_run: ``bool``
 
         :return: a list of API access rules.
-        :rtype: ``list`` of ``dict`` if successfull or  ``dict``
+        :rtype: ``List`` of ``dict`` if successfull or  ``dict``
         """
 
         action = "UpdateApiAccessRule"
