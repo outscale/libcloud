@@ -16,6 +16,7 @@
 from datetime import datetime
 import hashlib
 import hmac
+import json
 
 from libcloud.utils.py3 import urlquote
 
@@ -77,9 +78,11 @@ class OSCRequestSignerAlgorithmV4(OSCRequestSigner):
         date = datetime.utcnow()
         host = "{}.{}.outscale.com".format(service_name, region)
         headers = {
-            'Content-Type': "application/json; charset=utf-8",
-            'X-Osc-Date': date.strftime('%Y%m%dT%H%M%SZ'),
+            'Accept-Encoding': 'gzip,deflate',
+            'Content-Type': "application/json",
             'Host': host,
+            'User-Agent': '',
+            'X-Osc-Date': date.strftime('%Y%m%dT%H%M%SZ')
         }
         path = "/{}/{}/{}".format(
             self.connection.service_name,
@@ -156,5 +159,5 @@ class OSCRequestSignerAlgorithmV4(OSCRequestSigner):
             self._get_request_params({}),
             self._get_canonical_headers(headers),
             self._get_signed_headers(headers),
-            hashlib.sha256(data.encode('utf-8')).hexdigest()
+            hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest()
         ])

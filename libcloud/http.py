@@ -221,6 +221,12 @@ class LibcloudConnection(LibcloudBaseConnection):
                 stream=False):
         url = urlparse.urljoin(self.host, url)
         headers = self._normalize_headers(headers=headers)
+        print("-----------------------------------")
+        print("Not Working One")
+        print(url)
+        print(body)
+        print(headers)
+        print("-----------------------------------")
 
         self.response = self.session.request(
             method=method.lower(),
@@ -235,7 +241,6 @@ class LibcloudConnection(LibcloudBaseConnection):
     def prepared_request(self, method, url, body=None,
                          headers=None, raw=False, stream=False):
         headers = self._normalize_headers(headers=headers)
-
         req = requests.Request(method, ''.join([self.host, url]),
                                data=body, headers=headers)
 

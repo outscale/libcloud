@@ -42,7 +42,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     type = Provider.OUTSCALE
     name = 'Outscale API'
-    website = 'http://www.outscale.com'
+    website = 'https://www.outscale.com'
 
     def __init__(self,
                  key: str = None,
@@ -51,11 +51,18 @@ class OutscaleNodeDriver(NodeDriver):
                  service: str = 'api',
                  version: str = 'latest',
                  base_uri: str = 'outscale.com'
-                 ):
+    ):
         self.key = key
         self.secret = secret
         self.region = region
-        self.connection = ConnectionUserAndKey(self.key, self.secret)
+        self.host = "api.{}.outscale.com".format(
+            region
+        )
+        self.connection = ConnectionUserAndKey(
+            self.key,
+            self.secret,
+            host=self.host
+        )
         self.connection.region_name = region
         self.connection.service_name = service
         self.service_name = service
@@ -8349,7 +8356,20 @@ class OutscaleNodeDriver(NodeDriver):
         endpoint = self._get_outscale_endpoint(self.region,
                                                self.version,
                                                action)
-        return requests.post(endpoint, data=data, headers=headers)
+        action = "{}/{}/{}".format(self.service_name, self.version, action)
+        print("-----------------------------------")
+        print("Working One")
+        print(endpoint)
+        print(data)
+        print(headers)
+        print("-----------------------------------")
+        return self.connection.request(
+            action=action,
+            data=data,
+            headers=headers,
+            method='POST'
+        )
+        #return requests.post(endpoint, data=data, headers=headers)
 
     def _ex_generate_headers(self, action: str, data: str):
         return self.signer.get_request_headers(

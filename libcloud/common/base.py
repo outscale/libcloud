@@ -141,7 +141,6 @@ class Response(object):
         :type connection: :class:`.Connection`
         """
         self.connection = connection
-
         # http.client In Python 3 doesn't automatically lowercase the header
         # names
         self.headers = lowercase_keys(dict(response.headers))
@@ -149,6 +148,7 @@ class Response(object):
         self.status = response.status_code
         self.request = response.request
         self.iter_content = response.iter_content
+        print("request_url :", self.request.url)
 
         self.body = response.text.strip() \
             if response.text is not None and hasattr(response.text, 'strip') \
@@ -469,15 +469,19 @@ class Connection(object):
 
     def _user_agent(self):
         user_agent_suffix = ' '.join(['(%s)' % x for x in self.ua])
-
+        print(self.driver)
         if self.driver:
             user_agent = 'libcloud/%s (%s) %s' % (
                 libcloud.__version__,
                 self.driver.name, user_agent_suffix)
+            print("User if: ", user_agent + "|")
+            print("User suffix: ", user_agent_suffix + "|")
         else:
             user_agent = 'libcloud/%s %s' % (
                 libcloud.__version__, user_agent_suffix)
-
+            print("User else: ", user_agent + "|")
+            print("User suffix: ", user_agent_suffix + "|")
+        print("User Agent: ", user_agent + "|")
         return user_agent
 
     def user_agent_append(self, token):
@@ -541,10 +545,8 @@ class Connection(object):
             headers = {}
         else:
             headers = copy.copy(headers)
-
         retry_enabled = os.environ.get('LIBCLOUD_RETRY_FAILED_HTTP_REQUESTS',
                                        False) or RETRY_FAILED_HTTP_REQUESTS
-
         action = self.morph_action_hook(action)
         self.action = action
         self.method = method
@@ -562,7 +564,10 @@ class Connection(object):
 
         # We always send a user-agent header
         headers.update({'User-Agent': self._user_agent()})
-
+        print("self._user_agent()")
+        print(self._user_agent())
+        print('"' + self._user_agent() + '"')
+        headers.update({'User-Agent': self._user_agent()[:-1]})
         # Indicate that we support gzip and deflate compression
         headers.update({'Accept-Encoding': 'gzip,deflate'})
 
@@ -585,7 +590,7 @@ class Connection(object):
                 url = '?'.join((action, urlencode(params, doseq=True)))
         else:
             url = action
-
+            print("url:", url)
         # IF connection has not yet been established
         if self.connection is None:
             self.connect()
