@@ -171,6 +171,10 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``dict``
         """
         action = "DeletePublicIp"
+        if public_ip is None and public_ip_id is None:
+            raise Exception("Missing parameter: public_ip || public_ip_id")
+        if public_ip is not None and public_ip_id is not None:
+            raise Exception("Only one of: public_ip || public_ip_id")
         data = {"DryRun": dry_run}
         if public_ip is not None:
             data.update({"PublicIp": public_ip})
@@ -260,6 +264,10 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``dict``
         """
         action = "LinkPublicIp"
+        if public_ip is None and public_ip_id is None:
+            raise Exception("Missing parameter: public_ip || public_ip_id")
+        if public_ip is not None and public_ip_id is not None:
+            raise Exception("Only one of: public_ip || public_ip_id")
         data = {"DryRun": dry_run}
         if public_ip is not None:
             data.update({"PublicIp": public_ip})
@@ -301,6 +309,8 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``dict``
         """
         action = "UnlinkPublicIp"
+        if public_ip is None and link_public_ip_id is None:
+            raise Exception("Missing parameter: public_ip || public_ip_id")
         data = {"DryRun": dry_run}
         if public_ip is not None:
             data.update({"PublicIp": public_ip})
@@ -767,6 +777,21 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``List`` of ``dict``
         """
         action = "ReadVmsState"
+        vm_state_values = [
+            "pending",
+            "running",
+            "stopping",
+            "stopped",
+            "shutting-down",
+            "terminated",
+            "quarantine"
+        ]
+        if vm_states is not None and vm_states not in vm_state_values:
+            raise ValueError(
+                "vm_states should be one of: {}".format(
+                    " | ".join(vm_state_values)
+                )
+            )
         data = {"Filters": {}, "DryRun": dry_run}
         if all_vms is not None:
             data.update({"AllVms": all_vms})
@@ -783,6 +808,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_update_node(
         self,
+        vm_id: str,
         block_device_mapping: List[dict],
         bsu_optimized: bool = None,
         deletion_protection: bool = False,
@@ -791,7 +817,6 @@ class OutscaleNodeDriver(NodeDriver):
         performance: str = True,
         security_group_ids: List[str] = None,
         user_data: str = False,
-        vm_id: str = None,
         vm_initiated_shutown_behavior: str = None,
         vm_type: int = None,
         dry_run: bool = False
@@ -859,6 +884,17 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``dict``
         """
         action = "UpdateVm"
+        performance_values = [
+            "medium",
+            "high",
+            "highest"
+        ]
+        if performance is not None and performance not in performance_values:
+            raise ValueError(
+                "performance should be one of: {}".format(
+                    " | ".join(performance_values)
+                )
+            )
         data = {
             "DryRun": dry_run,
         }
@@ -951,6 +987,9 @@ class OutscaleNodeDriver(NodeDriver):
         :return: the created image
         :rtype: ``NodeImage``
         """
+        action = "CreateImage"
+        if ex_file_location is None and node is None:
+            raise Exception("Missing parameter: ex_file_location || node")
         data = {
             "DryRun": ex_dry_run,
             "NoReboot": ex_no_reboot,
@@ -961,7 +1000,7 @@ class OutscaleNodeDriver(NodeDriver):
             data.update({"ImageName": name})
         if description is not None:
             data.update({"Description": description})
-        if node.id is not None:
+        if node is not None:
             data.update({"VmId": node.id})
         if ex_root_device_name is not None:
             data.update({"RootDeviceName": ex_root_device_name})
@@ -969,7 +1008,6 @@ class OutscaleNodeDriver(NodeDriver):
             data.update({"SourceRegionName": ex_source_region_name})
         if ex_file_location is not None:
             data.update({"FileLocation": ex_file_location})
-        action = "CreateImage"
         response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return self._to_node_image(response.json()["Image"])
@@ -977,7 +1015,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_create_image_export_task(
         self,
-        image: NodeImage = None,
+        image: NodeImage,
         osu_export_disk_image_format: str = None,
         osu_export_api_key_id: str = None,
         osu_export_api_secret_key: str = None,
@@ -1029,6 +1067,18 @@ class OutscaleNodeDriver(NodeDriver):
         :return: the created image export task
         :rtype: ``dict``
         """
+        disk_image_format_values = ["qcow2", "raw"]
+        if osu_export_disk_image_format is not None and \
+            osu_export_disk_image_format not in disk_image_format_values:
+            raise ValueError(
+                "osu_export_disk_image_format should be one of: {}".format(
+                    " | ".join(disk_image_format_values)
+                )
+            )
+        if osu_export_disk_image_format is None:
+            raise Exception("osu_export_disk_image_format is mandatory")
+        if osu_export_bucket is None:
+            raise Exception("osu_export_bucket is mandatory")
         action = "CreateImageExportTask"
         data = {
             "DryRun": dry_run,
@@ -1493,7 +1543,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     def get_key_pair(
         self,
-        name: str = None,
+        name: str,
         ex_dry_run: bool = False
     ):
         """
@@ -1577,6 +1627,9 @@ class OutscaleNodeDriver(NodeDriver):
         :return: the created snapshot
         :rtype: ``dict``
         """
+        action = "CreateSnapshot"
+        if ex_source_snapshot is None and volume is None:
+            raise Exception("Missing parameter: ex_source_snapshot || volume")
         data = {
             "DryRun": ex_dry_run,
         }
@@ -1593,7 +1646,6 @@ class OutscaleNodeDriver(NodeDriver):
         if volume is not None:
             data.update({"VolumeId": volume.id})
         data = json.dumps(data)
-        action = "CreateSnapshot"
         response = self._call_api(action, data)
         if response.status_code == 200:
             return self._to_snapshot(response.json()["Volume"])
@@ -1832,6 +1884,20 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``dict``
         """
         action = "CreateSnapshotExportTask"
+        disk_image_format_values = ["qcow2", "raw"]
+        if osu_export_disk_image_format is not None and \
+            osu_export_disk_image_format not in disk_image_format_values:
+            raise ValueError(
+                "osu_export_disk_image_format should be one of: {}".format(
+                    " | ".join(disk_image_format_values)
+                )
+            )
+        if osu_export_disk_image_format is None:
+            raise Exception("osu_export_disk_image_format is mandatory")
+        if osu_export_bucket is None:
+            raise Exception("osu_export_bucket is mandatory")
+        if snapshot is None:
+            raise Exception("snapshot is mandatory")
         data = {
             "DryRun": dry_run,
             "OsuExport": {
@@ -1940,6 +2006,12 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``List`` of ``dict``
         """
         action = "UpdateSnapshot"
+        if perm_to_create_volume_addition_account_id is None:
+            raise Exception(
+                "perm_to_create_volume_addition_account_id is mandatory"
+            )
+        if snapshot is None:
+            raise Exception("snapshot is mandatory")
         data = {
             "DryRun: ": dry_run,
             "PermissionsToCreateVolume": {
@@ -2179,7 +2251,8 @@ class OutscaleNodeDriver(NodeDriver):
         self,
         node: Node,
         volume: StorageVolume,
-        device: str = None
+        device: str = None,
+        ex_dry_run: bool = False
     ):
         """
         Attach a volume to a node.
@@ -2195,6 +2268,10 @@ class OutscaleNodeDriver(NodeDriver):
         :param      device: the name of the device (required)
         :type       device: ``str``
 
+        :param      ex_dry_run: If true, checks whether you have the required
+        permissions to perform the action.
+        :type       ex_dry_run: ``bool``
+
         :return: the attached volume
         :rtype: ``dict``
         """
@@ -2202,17 +2279,20 @@ class OutscaleNodeDriver(NodeDriver):
         data = json.dumps({
             "VmId": node.id,
             "VolumeId": volume.id,
-            "DeviceName": device
+            "DeviceName": device,
+            "DryRun": ex_dry_run
         })
         response = self._call_api(action, data)
         if response.status_code == 200:
             return True
         return response.json()
 
-    def detach_volume(self,
-                      volume: StorageVolume,
-                      ex_dry_run: bool = False,
-                      ex_force_unlink: bool = False):
+    def detach_volume(
+        self,
+        volume: StorageVolume,
+        ex_dry_run: bool = False,
+        ex_force_unlink: bool = None
+    ):
         """
         Detach a volume from a node.
 
@@ -2321,11 +2401,13 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``List`` of ``dict``
         """
         action = "ReadConsumptionAccount"
+        if from_date is None:
+            raise Exception("snapshot is mandatory")
+        if to_date is None:
+            raise Exception("to_date is mandatory")
         data = {"DryRun": dry_run}
-        if from_date is not None:
-            data.update({"FromDate": from_date})
-        if to_date is not None:
-            data.update({"ToDate": to_date})
+        data.update({"FromDate": from_date})
+        data.update({"ToDate": to_date})
         response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return response.json()["ConsumptionEntries"]
@@ -2409,22 +2491,30 @@ class OutscaleNodeDriver(NodeDriver):
         """
         action = "CreateAccount"
         data = {"DryRun": dry_run}
-        if city is not None:
-            data.update({"City": city})
-        if company_name is not None:
-            data.update({"CompanyName": company_name})
-        if country is not None:
-            data.update({"Country": country})
-        if customer_id is not None:
-            data.update({"CustomerId": customer_id})
-        if email is not None:
-            data.update({"Email": email})
-        if first_name is not None:
-            data.update({"FirstName": first_name})
-        if last_name is not None:
-            data.update({"LastName": last_name})
-        if zip_code is not None:
-            data.update({"ZipCode": zip_code})
+        if city is None:
+            raise Exception("city is mandatory")
+        data.update({"City": city})
+        if company_name is None:
+            raise Exception("company_name is mandatory")
+        data.update({"CompanyName": company_name})
+        if country is None:
+            raise Exception("country is mandatory")
+        data.update({"Country": country})
+        if customer_id is None:
+            raise Exception("customer_id is mandatory")
+        data.update({"CustomerId": customer_id})
+        if email is None:
+            raise Exception("email is mandatory")
+        data.update({"Email": email})
+        if first_name is None:
+            raise Exception("first_name is mandatory")
+        data.update({"FirstName": first_name})
+        if last_name is None:
+            raise Exception("last_name is mandatory")
+        data.update({"LastName": last_name})
+        if zip_code is None:
+            raise Exception("zip_code is mandatory")
+        data.update({"ZipCode": zip_code})
         if job_title is not None:
             data.update({"JobTitle": job_title})
         if mobile_number is not None:
@@ -2538,8 +2628,8 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_reset_account_password(
         self,
-        password: str = "",
-        token: str = "",
+        password: str = None,
+        token: str = None,
         dry_run: bool = False,
     ):
         """
@@ -2560,6 +2650,10 @@ class OutscaleNodeDriver(NodeDriver):
         :return: True if the action is successful
         :rtype: ``bool``
         """
+        if password is None:
+            raise Exception("password is mandatory")
+        if token is None:
+            raise Exception("token is mandatory")
         action = "ResetAccountPassword"
         data = json.dumps({
             "DryRun": dry_run, "Password": password, "Token": token
@@ -2630,6 +2724,10 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``bool``
         """
         action = "CreateTags"
+        if tag_key is None:
+            raise Exception("tag_key is mandatory")
+        if tag_value is None:
+            raise Exception("tag_value is mandatory")
         data = {"DryRun": dry_run, "ResourceIds": resource_ids, "Tags": []}
         if tag_key is not None and tag_value is not None:
             data["Tags"].append({"Key": tag_key, "Value": tag_value})
@@ -2664,6 +2762,8 @@ class OutscaleNodeDriver(NodeDriver):
         :return: True if the action is successful
         :rtype: ``bool``
         """
+        if tags is None:
+            raise Exception("tags is mandatory")
         action = "CreateTags"
         data = {"DryRun": dry_run, "ResourceIds": resource_ids, "Tags": tags}
         response = self._call_api(action, json.dumps(data))
@@ -2695,6 +2795,8 @@ class OutscaleNodeDriver(NodeDriver):
         :rtype: ``bool``
         """
         action = "DeleteTags"
+        if tags is None:
+            raise Exception("tags is mandatory")
         data = {"DryRun": dry_run, "ResourceIds": resource_ids, "Tags": tags}
         response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
@@ -2897,6 +2999,12 @@ class OutscaleNodeDriver(NodeDriver):
         """
         action = "UpdateAccessKey"
         data = {"DryRun": dry_run}
+        state_values = ["ACTIVE", "INACTIVE"]
+        if state is not None and state not in state_values:
+            raise ValueError(
+                "state should be one of: {}".format(" | ".join(state_values)
+                )
+            )
         if access_key_id is not None:
             data.update({"AccessKeyId": access_key_id})
         if state is not None:
@@ -2944,12 +3052,15 @@ class OutscaleNodeDriver(NodeDriver):
         """
         action = "CreateClientGateway"
         data = {"DryRun": dry_run}
-        if bgp_asn is not None:
-            data.update({"BgpAsn": bgp_asn})
-        if connection_type is not None:
-            data.update({"ConnectionType": connection_type})
-        if public_ip is not None:
-            data.update({"PublicIp": public_ip})
+        if bgp_asn is None:
+            raise Exception("bgp_asn is mandatory")
+        data.update({"BgpAsn": bgp_asn})
+        if connection_type is None:
+            raise Exception("connection_type is mandatory")
+        data.update({"ConnectionType": connection_type})
+        if public_ip is None:
+            raise Exception("public_ip is mandatory")
+        data.update({"PublicIp": public_ip})
         response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return response.json()["ClientGateway"]
@@ -3254,12 +3365,15 @@ class OutscaleNodeDriver(NodeDriver):
         """
         action = "CreateDirectLink"
         data = {"DryRun": dry_run}
-        if bandwidth is not None:
-            data.update({"Bandwidth": bandwidth})
-        if direct_link_name is not None:
-            data.update({"DirectLinkName": direct_link_name})
-        if location is not None:
-            data.update({"Location": location})
+        if bandwidth is None:
+            raise Exception("bandwidth is mandatory")
+        data.update({"Bandwidth": bandwidth})
+        if direct_link_name is None:
+            raise Exception("direct_link_name is mandatory")
+        data.update({"DirectLinkName": direct_link_name})
+        if location is None:
+            raise Exception("location is mandatory")
+        data.update({"Location": location})
         response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return response.json()["DirectLink"]
@@ -3267,7 +3381,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_delete_direct_link(
         self,
-        direct_link_id: str = None,
+        direct_link_id: str,
         dry_run: bool = False,
     ):
         """
@@ -3380,32 +3494,35 @@ class OutscaleNodeDriver(NodeDriver):
         """
         action = "CreateDirectLinkInterface"
         data = {"DryRun": dry_run, "DirectLinkInterface": {}}
-        if direct_link_id is not None:
-            data.update({"DirectLinkId": direct_link_id})
-        if bgp_asn is not None:
-            data["DirectLinkInterface"].update({"BgpAsn": bgp_asn})
+        if direct_link_id is None:
+            raise Exception("direct_link_id is mandatory")
+        data.update({"DirectLinkId": direct_link_id})
+        if bgp_asn is None:
+            raise Exception("bgp_asn is mandatory")
+        data["DirectLinkInterface"].update({"BgpAsn": bgp_asn})
         if bgp_key is not None:
             data["DirectLinkInterface"].update({"BgpKey": bgp_key})
         if client_private_ip is not None:
             data["DirectLinkInterface"].update({
                 "ClientPrivateIp": client_private_ip
             })
-        if direct_link_interface_name is not None:
-            data["DirectLinkInterface"].update({
-                "DirectLinkInterfaceName": direct_link_interface_name
-            })
+        if direct_link_interface_name is None:
+            raise Exception("direct_link_interface_name is mandatory")
+        data["DirectLinkInterface"].update({
+            "DirectLinkInterfaceName": direct_link_interface_name
+        })
         if outscale_private_ip is not None:
             data["DirectLinkInterface"].update({
                 "OutscalePrivateIp": outscale_private_ip
             })
-        if virtual_gateway_id is not None:
-            data["DirectLinkInterface"].update({
-                "VirtualGatewayId": virtual_gateway_id
-            })
-        if vlan is not None:
-            data["DirectLinkInterface"].update({
-                "Vlan": vlan
-            })
+        if virtual_gateway_id is None:
+            raise Exception("virtual_gateway_id is mandatory")
+        data["DirectLinkInterface"].update({
+            "VirtualGatewayId": virtual_gateway_id
+        })
+        if vlan is None:
+            raise Exception("vlan is mandatory")
+        data["DirectLinkInterface"].update({"Vlan": vlan})
         response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return response.json()["DirectLinkInterface"]
@@ -3413,7 +3530,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_delete_direct_link_interface(
         self,
-        direct_link_interface_id: str = None,
+        direct_link_interface_id: str,
         dry_run: bool = False,
     ):
         """
@@ -3517,16 +3634,16 @@ class OutscaleNodeDriver(NodeDriver):
         """
         action = "CreateFlexibleGpu"
         data = {"DryRun": dry_run}
+        if model_name is None:
+            raise Exception("model_name is mandatory")
+        data.update({"ModelName": model_name})
+        if subregion_name is None:
+            raise Exception("subregion_name is mandatory")
+        data.update({"SubregionName": subregion_name})
         if delete_on_vm_deletion is not None:
             data.update({"DeleteOnVmDeletion": delete_on_vm_deletion})
         if generation is not None:
             data.update({"Generation": generation})
-        if model_name is not None:
-            data.update({"ModelName": model_name})
-        if subregion_name is not None:
-            data.update({
-                "SubregionName": subregion_name
-            })
         response = self._call_api(action, json.dumps(data))
         if response.status_code == 200:
             return response.json()["FlexibleGpu"]
@@ -3534,7 +3651,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_delete_flexible_gpu(
         self,
-        flexible_gpu_id: str = None,
+        flexible_gpu_id: str,
         dry_run: bool = False,
     ):
         """
@@ -3563,7 +3680,7 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_unlink_flexible_gpu(
         self,
-        flexible_gpu_id: str = None,
+        flexible_gpu_id: str,
         dry_run: bool = False,
     ):
         """
@@ -3593,8 +3710,8 @@ class OutscaleNodeDriver(NodeDriver):
 
     def ex_link_flexible_gpu(
         self,
-        flexible_gpu_id: str = None,
-        vm_id: str = None,
+        flexible_gpu_id: str,
+        vm_id: str,
         dry_run: bool = False,
     ):
         """
