@@ -5,6 +5,8 @@ Apache Libcloud is a Python library which hides differences between different
 cloud provider APIs and allows you to manage different cloud resources
 through a unified and easy to use API.
 
+.. image:: https://docs.outscale.com/fr/userguide/_images/Project-Incubating-blue.svg
+    :target: https://docs.outscale.com/en/userguide/Open-Source-Projects.html
 
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
     :target: https://libcloud.readthedocs.org
